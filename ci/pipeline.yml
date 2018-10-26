@@ -31,7 +31,7 @@ jobs:
           platform: linux
           image_resource:
             type: docker-image
-            source: {repository: java, tag: 8-alpine}
+            repository: maven
           inputs:
           - name: source-repo
           - name: m2
@@ -57,7 +57,7 @@ jobs:
           platform: linux
           image_resource:
             type: docker-image
-            source: {repository: java, tag: 8-alpine}
+            repository: maven
           inputs:
           - name: source-repo
           - name: m2
