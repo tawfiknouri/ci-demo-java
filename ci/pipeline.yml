@@ -12,7 +12,7 @@ resources:
     type: ftp
     source:
       regex: (?P<file>test(?P<version>[0-9\.]+).*\.txt)
-	  uri: ftp://demo:demord@192.168.43.84:21/prod/
+      uri: ftp://demo:demord@192.168.43.84:21/prod/
   - name: m2
     type: docker-image
     source:
