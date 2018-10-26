@@ -1,0 +1,5 @@
+---
+applications:
+  - name: concourse-ci-demo
+    path: target/demo.jar
+    buildpack: java_buildpack
