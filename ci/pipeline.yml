@@ -42,8 +42,7 @@ jobs:
               - |
                 cd source-repo
                 pwd
-                chmod +x ./mvnw
-                ./mvnw test -Dmaven.repo.local=../m2/rootfs/opt/m2
+                ./mvn test -Dmaven.repo.local=../m2/rootfs/opt/m2
   - name: build-and-deploy
     serial: true
     public: true
@@ -70,8 +69,7 @@ jobs:
               - -c
               - |
                 cd source-repo
-                chmod +x ./mvnw
-                ./mvnw package -Dmaven.test.skip=true -Dmaven.repo.local=../m2/rootfs/opt/m2
+                ./mvn package -Dmaven.test.skip=true -Dmaven.repo.local=../m2/rootfs/opt/m2
                 cp target/*.jar ../output/demo.jar
       - put: ftpupload
         params:
