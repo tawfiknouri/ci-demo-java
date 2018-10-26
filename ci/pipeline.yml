@@ -16,7 +16,7 @@ resources:
   - name: m2
     type: docker-image
     source:
-      repository: pivotalpa/maven-resource
+      repository: making/m2
 jobs:
   - name: unit-test
     serial: true
@@ -31,7 +31,8 @@ jobs:
           platform: linux
           image_resource:
             type: docker-image
-            source: {repository: java, tag: 8-alpine}
+            source:
+              repository: maven
           inputs:
           - name: source-repo
           - name: m2
@@ -42,7 +43,7 @@ jobs:
               - |
                 cd source-repo
                 pwd
-                ./mvn test -Dmaven.repo.local=../m2/rootfs/opt/m2
+                mvn test -Dmaven.repo.local=../m2/rootfs/opt/m2
   - name: build-and-deploy
     serial: true
     public: true
@@ -57,7 +58,8 @@ jobs:
           platform: linux
           image_resource:
             type: docker-image
-            source: {repository: java, tag: 8-alpine}
+            source:
+              repository: maven
           inputs:
           - name: source-repo
           - name: m2
@@ -69,7 +71,7 @@ jobs:
               - -c
               - |
                 cd source-repo
-                ./mvn package -Dmaven.test.skip=true -Dmaven.repo.local=../m2/rootfs/opt/m2
+                mvn package -Dmaven.test.skip=true -Dmaven.repo.local=../m2/rootfs/opt/m2
                 cp target/*.jar ../output/demo.jar
       - put: ftpupload
         params:
