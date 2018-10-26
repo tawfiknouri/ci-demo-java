@@ -16,7 +16,7 @@ resources:
   - name: m2
     type: docker-image
     source:
-      repository: making/m2
+      repository: pivotalpa/maven-resource
 jobs:
   - name: unit-test
     serial: true
@@ -36,11 +36,12 @@ jobs:
           - name: source-repo
           - name: m2
           run:
-            path: sh
+            path: bash
             args:
               - -c
               - |
                 cd source-repo
+                pwd
                 chmod +x ./mvnw
                 ./mvnw test -Dmaven.repo.local=../m2/rootfs/opt/m2
   - name: build-and-deploy
@@ -64,7 +65,7 @@ jobs:
           outputs:
           - name: output
           run:
-            path: sh
+            path: bash
             args:
               - -c
               - |
