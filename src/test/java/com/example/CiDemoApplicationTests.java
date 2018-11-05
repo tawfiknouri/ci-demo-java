@@ -29,5 +29,10 @@ public class CiDemoApplicationTests {
     public void contextLoads2() {
         assertThat(restTemplate.getForObject("http://localhost:" + port, String.class), is("xHello World!"));
     }
+    
+     @Test
+    public void contextLoads3() {
+        assertThat(restTemplate.getForObject("http://localhost:" + port, String.class), is("Hello World!"));
+    }
 
 }

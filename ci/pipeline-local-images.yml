@@ -1,0 +1,82 @@
+---
+resource_types:
+  - name: ftp
+    type: docker-image
+    source:
+      repository: "localhost:5000/ftplocal"
+      insecure_registries: ["registry:5000"]
+resources:
+  - name: source-repo
+    type: git
+    source: {uri: 'https://github.com/tawfik-nouri/ci-demo-java', branch: master}
+  - name: ftpupload
+    type: ftp
+    source:
+      regex: (?P<file>test(?P<version>[0-9\.]+).*\.txt)
+      uri: ftp://demo:demord@192.168.43.84:21/prod/
+  - name: m2
+    type: docker-image
+    source:
+      repository: "localhost:5000/m2local"
+      insecure_registries: ["registry:5000"]
+jobs:
+  - name: unit-test
+    serial: true
+    public: true
+    plan:
+      - aggregate:
+        - get: source-repo
+          trigger: true
+        - get: m2
+      - task: unit
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: "localhost:5000/mavenlocal"
+              insecure_registries: ["registry:5000"]
+          inputs:
+          - name: source-repo
+          - name: m2
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                cd source-repo
+                pwd
+                mvn test -Dmaven.repo.local=../m2/rootfs/opt/m2
+  - name: build-and-deploy
+    serial: true
+    public: true
+    plan:
+      - aggregate:
+        - get: source-repo
+          trigger: true
+          passed: [ unit-test ]
+        - get: m2
+      - task: mvn-package
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: "localhost:5000/mavenlocal"
+              insecure_registries: ["registry:5000"]
+          inputs:
+          - name: source-repo
+          - name: m2
+          outputs:
+          - name: output
+          run:
+            path: sh
+            args:
+              - -c
+              - |
+                cd source-repo
+                mvn package -Dmaven.test.skip=true -Dmaven.repo.local=../m2/rootfs/opt/m2
+                cp target/*.jar ../output/demo.jar
+      - put: ftpupload
+        params:
+          file: ../output/demo.jar
